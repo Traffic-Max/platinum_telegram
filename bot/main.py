@@ -3,11 +3,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
 from bot.utils import check_publications
 from database.db_session import init_db
+from bot.handlers import *
+from config.settings import bot, dp
 
-
-TOKEN = '6618709244:AAGw5yx1rpj3BEEfFpqTawBpe8OvA-xe-TQ'
-bot = Bot(token=TOKEN)
-dp = Dispatcher(bot)
+# TOKEN = '6618709244:AAGw5yx1rpj3BEEfFpqTawBpe8OvA-xe-TQ'
+# bot = Bot(token=TOKEN)
+# dp = Dispatcher(bot)
 
 init_db()
 
@@ -19,15 +20,6 @@ async def send_welcome(message: types.Message):
     markup.add(item1, item2)
     await message.answer("Добро пожаловать!", reply_markup=markup)
 
-@dp.callback_query_handler(lambda c: c.data == 'publications')
-async def process_callback_publications(callback_query: types.CallbackQuery):
-    await bot.answer_callback_query(callback_query.id)
-    new_links, removed_links = check_publications()
-    if new_links or removed_links:
-        await bot.send_message(callback_query.from_user.id, "Есть изменения!")
-        # Здесь можно добавить кнопки для показа новых и удаленных ссылок
-    else:
-        await bot.send_message(callback_query.from_user.id, "Нет изменений.")
 
 @dp.callback_query_handler(lambda c: c.data == 'monitoring')
 async def process_callback_monitoring(callback_query: types.CallbackQuery):
